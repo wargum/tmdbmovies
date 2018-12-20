@@ -1,0 +1,50 @@
+{% extends 'tmdbmovies/base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+
+
+
+  <header>
+    <div class="row">
+      <div class="col-sm-10">
+        <h2>{{ cast.cast_name | safe }}</h2>
+      </div>
+      <div class="col-xs-1">
+        {% if user.is_authenticated %}
+          <a class="btn btn-outline-secondary" href="{% url 'cast_update' cast.pk %}">edit</a>
+        {% endif %}
+      </div>
+      <div class="col-xs-1">
+        {% if user.is_authenticated %}
+          &nbsp;<a class="btn btn-outline-warning" href="{% url 'cast_delete' cast.pk %}">delete</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+{% if cast.gender %}
+  <div class="row">
+    <div class="col-sm-2">
+      <p>Gender</p>
+    </div>
+    <div class="col-sm-10">
+      <p>{{ cast.gender.gender_name}}</p>
+    </div>
+  </div>
+
+{% if cast.movie_names %}
+  <div class="row">
+    <div class="col-sm-2">
+      <p>Participating Movies</p>
+    </div>
+    <div class="col-sm-10">
+      <p>{{ cast.movie_names }}</p>
+    </div>
+  </div>
+  {% endif %}
+{% endif %}
+
+{% else %}
+<a href="{% url 'login' %}">Log in</a>
+{% endif %}
+{% endblock content %}}

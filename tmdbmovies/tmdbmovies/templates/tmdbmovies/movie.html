@@ -1,0 +1,37 @@
+{% extends 'tmdbmovies/base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+<article>
+  <header>
+      <div class="row">
+        <div class="col-sm-11">
+          <h2>TMDB Movies</h2>
+        </div>
+        <div class="col-sm-1">
+          {% if user.is_authenticated %}
+            <a class="btn btn-outline-secondary" href="{% url 'movie_new' %}">new</a>
+          {% endif %}
+        </div>
+      </div>
+  </header>
+
+  <!-- WARNING: there is no missing code between <nav>...</nav> -->
+  {% include 'tmdbmovies/pagination.html' %}
+  {% if movies %}
+  <ul>
+    {% for movie in movies %}
+    <!-- safe filter on for raw HTML stored in database -->
+    <li><a href="{% url 'movie_detail' movie.pk %}">{{ movie.title | safe }}</a></li>
+    {% endfor %}
+
+  </ul>
+  {% else %}
+  <p>No Movies are available to view.</p>
+  {% endif %}
+
+  <p>page count: {{ movies.count }}</p>
+</article>
+{% else %}
+<a href="{% url 'login' %}">Log in</a>
+{% endif %}
+{% endblock content %}}

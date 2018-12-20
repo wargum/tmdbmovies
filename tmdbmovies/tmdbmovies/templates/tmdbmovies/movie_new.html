@@ -1,0 +1,106 @@
+{% extends 'tmdbmovies/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+  <header>
+    <h2>New Movie</h2>
+  </header>
+
+  <!-- novalidate attribute required to render validation messages -->
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    <div class="row">
+        <div class="col-6">
+          {{ form.genres|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        {{ form.budget|as_crispy_field }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        {{ form.homepage|as_crispy_field }}
+      </div>
+    </div>
+
+
+    <!-- Restore missing fields rendered using Bootstrap rows and columns classes --> 
+    <div class="row">
+        <div class="col-6">
+            {{ form.tmdb_id|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+          {{ form.original_language|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            {{ form.original_title|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            {{ form.overview|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        {{ form.popularity|as_crispy_field }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        {{ form.revenue|as_crispy_field }}
+      </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+            {{ form.runtime|as_crispy_field }}
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        {{ form.tagline|as_crispy_field }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        {{ form.title|as_crispy_field }}
+      </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6">
+          {{ form.vote_average|as_crispy_field }}
+        </div>
+      </div>
+
+    
+    <div class="row">
+        <div class="col-6">
+          {{ form.vote_count|as_crispy_field }}
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-outline-success">Add</button>
+    &nbsp;<a class="btn btn-outline-secondary" href="{% url 'movie' %}">cancel</a>
+  </form>
+
+{% endblock content %}
