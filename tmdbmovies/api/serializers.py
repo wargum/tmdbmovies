@@ -221,9 +221,11 @@ class MovieSerializer(serializers.ModelSerializer):
 
 class CastSerializer(serializers.ModelSerializer):
 	cast_name = serializers.CharField(
+		allow_blank=False,
 		max_length=45,
 	)
 	gender = GenderSerializer(
+		source='gender_set', # Note use of _set
 		many=False,
 		read_only=True
 	)
@@ -239,10 +241,8 @@ class CastSerializer(serializers.ModelSerializer):
 		many=True,
 		read_only=True
 	)
-	movie_ids = serializers.PrimaryKeyRelatedField(
-		many=True,
+	movie_casts = serializers.ListField(
 		write_only=True,
-		queryset=Movie.objects.all(),
 		source='movie_cast'
 	)
 
@@ -254,26 +254,25 @@ class CastSerializer(serializers.ModelSerializer):
 			'gender',
             'gender_id',
 			'movie_cast',
-			'movie_ids'
+			'movie_casts'
 		)
 
 	def create(self, validated_data):
-
-		movies = validated_data.pop('movie_cast')
+		characters = validated_data.pop('movie_cast')
 		cast = Cast.objects.create(**validated_data)
 
-		if movies is not None:
-			for movie in movies:
+		if characters is not None:
+			for character in characters:
 				MovieCast.objects.create(
-					movie_id=movie.movie_id,
-					cast_id=cast.cast_id
+					movie_id=character['movie_id'],
+					cast_id=cast.cast_id,
+					characters=character['character']
 				)
 		return cast
 
 	def update(self, instance, validated_data):
-
-		cast_id = instance.cast_id
 		new_movies = validated_data.pop('movie_cast')
+		cast_id = instance.cast_id
 
 		instance.cast_name = validated_data.get(
 			'cast_name',
@@ -287,7 +286,7 @@ class CastSerializer(serializers.ModelSerializer):
 
 		instance.save()
 
-		# If any existing country/areas are not in updated list, delete them
+		# If any existing movies are not in updated list, delete them
 		new_ids = []
 		old_ids = MovieCast.objects \
 			.values_list('movie_id', flat=True) \
@@ -297,13 +296,17 @@ class CastSerializer(serializers.ModelSerializer):
 
 		# Insert new unmatched country entries
 		for movie in new_movies:
-			new_id = movie.movie_id
+			new_id = movie['movie_id']
 			new_ids.append(new_id)
 			if new_id in old_ids:
 				continue
 			else:
 				MovieCast.objects \
-					.create(movie_id=new_id,cast_id=cast_id)
+					.create(
+					movie_id=new_id,
+					cast_id=cast_id,
+					characters=movie['character']
+				)
 
 		# Delete old unmatched country entries
 		for old_id in old_ids:
