@@ -258,9 +258,6 @@ class CastSerializer(serializers.ModelSerializer):
 		)
 
 	def create(self, validated_data):
-
-		print(validated_data)
-
 		characters = validated_data.pop('movie_cast')
 		cast = Cast.objects.create(**validated_data)
 
